@@ -54,7 +54,7 @@
 }
 
 .back {
-    background: blue;
+    /* background: blue; */
     border-radius: 8px;
     transform: rotateY(180deg);
 }
