@@ -70,6 +70,16 @@ button {
         margin: 10px;
         perspective: 1000px;
     }
+    input[type='number'] {
+        display: block;
+        font-size: 1.5rem;
+        width: 60px;
+        border-radius: 5px;
+        border-style: hidden;
+        background-color: rgba(255, 255, 255, 0.783);
+        text-align: center;
+        margin: 10px auto;
+    }
 }
 
 @media (min-width: 601px) {
