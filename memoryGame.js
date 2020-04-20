@@ -62,9 +62,7 @@ const addCardLogic = (card) => {
             } else {
                 gameBoard.style.pointerEvents = 'none';
                 setTimeout(() => {
-                    if (score > 0) {
-                        score--;
-                    }
+                    score--;
                     htmlArray.forEach((card) => {
                         card.classList.remove('cardFlip');
                     });
