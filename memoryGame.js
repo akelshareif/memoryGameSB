@@ -2,24 +2,11 @@ const setupForm = document.querySelector('form');
 const numOfCards = document.querySelector('input[type="number"]');
 const gameBoard = document.querySelector('#game');
 const resetBtn = document.querySelector('#reset');
+const scoreDisplay = document.querySelector('#score');
 let selectedCardColors = [];
 let htmlArray = [];
 let score = 0;
-
-// Next CSS Steps!
-// 1) transition in the gameboard
-// 2) style the header
-// 3) style the body background
-// 4) style score
-// 5) style game win condition
-
-// Next JS Steps!
-// 1) figure out how to make sure two unmatched cards are flipped before flipping them back
-// 2) maybe adding a settimeout would solve problem, but it also completes game logic
-// 3) flip unmatched cards back after some time passed
-// 4) calculate a score when cards are matched and update it on DOM
-// 5) add game win logic for when all cards are flipped
-// 6) clean up code via refactoring
+let numFlippedCards = 0;
 
 const COLORS = [
     'red',
@@ -35,21 +22,60 @@ const COLORS = [
 const shuffle = (array) => {
     let counter = array.length;
 
-    // While there are elements in the array
     while (counter > 0) {
-        // Pick a random index
         let index = Math.floor(Math.random() * counter);
-
-        // Decrease counter by 1
         counter--;
 
-        // And swap the last element with it
         let temp = array[counter];
         array[counter] = array[index];
         array[index] = temp;
     }
-
     return array;
+};
+
+const isGameOver = () => {
+    const cardsOnBoard = gameBoard.children;
+    if (numFlippedCards === cardsOnBoard.length) {
+        // console.log('game over');
+        scoreDisplay.innerText = `Game Over! You have a score of: ${score}`;
+    } else {
+        scoreDisplay.innerText = `Score: ${score}`;
+    }
+};
+
+const addCardLogic = (card) => {
+    card.addEventListener('click', function (e) {
+        card.classList.add('cardFlip');
+        if (selectedCardColors.length < 2) {
+            selectedCardColors.push(e.target.nextSibling.style.backgroundColor);
+            htmlArray.push(card);
+        }
+        if (selectedCardColors.length === 2) {
+            if (selectedCardColors[0] === selectedCardColors[1]) {
+                htmlArray.forEach((card) => {
+                    card.style.pointerEvents = 'none';
+                });
+                score++;
+                numFlippedCards += 2;
+                selectedCardColors = [];
+                htmlArray = [];
+            } else {
+                gameBoard.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    if (score > 0) {
+                        score--;
+                    }
+                    htmlArray.forEach((card) => {
+                        card.classList.remove('cardFlip');
+                    });
+                    gameBoard.style.pointerEvents = 'auto';
+                    selectedCardColors = [];
+                    htmlArray = [];
+                }, 1000);
+            }
+        }
+        isGameOver();
+    });
 };
 
 const cardBuilder = (num, colorArr) => {
@@ -67,31 +93,7 @@ const cardBuilder = (num, colorArr) => {
 
         card.appendChild(front);
         card.appendChild(back);
-        card.addEventListener('click', function (e) {
-            card.classList.add('cardFlip');
-            if (selectedCardColors.length < 2) {
-                selectedCardColors.push(
-                    e.target.nextSibling.style.backgroundColor
-                );
-                htmlArray.push(card);
-            }
-            if (selectedCardColors.length === 2) {
-                if (selectedCardColors[0] === selectedCardColors[1]) {
-                    console.log('stay flipped');
-                    selectedCardColors = [];
-                    htmlArray = [];
-                } else {
-                    console.log('flip back');
-                    setTimeout(() => {
-                        htmlArray.forEach((card) => {
-                            card.classList.remove('cardFlip');
-                        });
-                        selectedCardColors = [];
-                        htmlArray = [];
-                    }, 2000);
-                }
-            }
-        });
+        addCardLogic(card);
 
         cardContainer.appendChild(card);
         gameBoard.appendChild(cardContainer);
@@ -110,8 +112,15 @@ setupForm.addEventListener('submit', function (e) {
 
         cardBuilder(numOfCards.value, shuffle(fullColorArr));
     }
+    isGameOver();
 });
 
 resetBtn.addEventListener('click', function () {
     gameBoard.innerHTML = '';
+    selectedCardColors = [];
+    htmlArray = [];
+    score = 0;
+    numFlippedCards = 0;
+    scoreDisplay.innerText = `Score: ${score}`;
+    numOfCards.value = '';
 });
