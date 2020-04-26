@@ -47,7 +47,7 @@ button {
     background-color: rgba(255, 255, 255, 0.783);
 }
 
-#score {
+.score {
     margin-top: 5px;
 }
 

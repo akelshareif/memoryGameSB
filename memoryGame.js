@@ -2,10 +2,11 @@ const setupForm = document.querySelector('form');
 const numOfCards = document.querySelector('input[type="number"]');
 const gameBoard = document.querySelector('#game');
 const resetBtn = document.querySelector('#reset');
-const scoreDisplay = document.querySelector('#score');
+const scoreDisplay = document.querySelectorAll('.score');
 let selectedCardColors = [];
 let htmlArray = [];
 let score = 0;
+let numOfGuesses = 0;
 let numFlippedCards = 0;
 
 const COLORS = [
@@ -37,9 +38,11 @@ const isGameOver = () => {
     const cardsOnBoard = gameBoard.children;
     if (numFlippedCards === cardsOnBoard.length) {
         // console.log('game over');
-        scoreDisplay.innerText = `Game Over! You have a score of: ${score}`;
+        scoreDisplay[0].innerText = 'Game Over!';
+        scoreDisplay[1].innerText = `Guesses: ${numOfGuesses} Score: ${score}`;
     } else {
-        scoreDisplay.innerText = `Score: ${score}`;
+        scoreDisplay[0].innerText = `Number of Guesses: ${numOfGuesses}`;
+        scoreDisplay[1].innerText = `Score: ${score}`;
     }
 };
 
@@ -51,6 +54,7 @@ const addCardLogic = (card) => {
             htmlArray.push(card);
         }
         if (selectedCardColors.length === 2) {
+            numOfGuesses++;
             if (selectedCardColors[0] === selectedCardColors[1]) {
                 htmlArray.forEach((card) => {
                     card.style.pointerEvents = 'none';
@@ -118,7 +122,8 @@ resetBtn.addEventListener('click', function () {
     selectedCardColors = [];
     htmlArray = [];
     score = 0;
+    numOfGuesses = 0;
     numFlippedCards = 0;
-    scoreDisplay.innerText = `Score: ${score}`;
+    scoreDisplay.innerText = `Number of Guesses: ${numOfGuesses} Score: ${score}`;
     numOfCards.value = '';
 });
